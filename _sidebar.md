@@ -1,0 +1,4 @@
+- [Home](/)
+
+- Projects
+  - [Lixy](/lixy/)
