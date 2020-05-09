@@ -94,7 +94,7 @@ The `anyOf` recognizer one of the strings from a set. It is case-sensitive.
 
 Creating a recognizer is simple, and is simply done by using
 
-```
+```kotlin
 anyOf("string 1", "other string", "sTrInG tHrEe")
 ```
 
@@ -236,16 +236,28 @@ val lexer = lixy {
 A multi-state lexer has a few differences:
 
 * It has multiple `state` block
-* Each block *must* additionally be preceded by a "state label"
+* Each block *must* be preceded by a "state label" (or the `default` special
+  label)
 * One state *must* be defined as the default state: that is the state with which
-  Lixy starts the lexing process
+  Lixy starts the lexing process.
 
-(TODO, create label with `stateLabel()` or with a dedicated enum, create the states with `myLabel state { ... }`)
+For more information, check the [tutorial](tutorial.md#multi-state-lexers).
 
-### Default state
+In short:
 
-(TODO, just use `default` instead of the state label)
+* Labels can be created using `stateLabel()` or with a dedicated enum, similar
+  to token types.
+* States are created with `myLabel state { ... }`
+* The default state is specified either by using `default state myLabel` or by
+  directly defining the default state `default state { ... }`.
 
 ### Changing the state
 
-(TODO, use `thenState myLabel` after the matcher)
+To change the state of the lexer, use `thenState` after a matcher.
+
+For example, when this matcher succeeds, it sets the lexer to the state with the
+`myGreatState` label.
+
+```kotlin
+matches("some regex") isToken myToken thenState myGreatState
+```
