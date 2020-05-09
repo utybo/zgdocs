@@ -137,3 +137,154 @@ The `tokens` variable receives a list of tokens:
 * `Hello` (type `greeting`, starts at 7, ends at 12)
 * ` ` (type `whitespace`, starts at 12, ends at 13)
 * `Hello` (type `greeting`, starts at 13, ends at 18)
+
+## Multi-state lexers
+
+For now, we have only used single-state lexers. While these are powerful enough for simple examples, it would be nice to have a more powerful solution.
+
+A state is, simply put, a set of rules that Lixy follows. In a single-state
+lexer, we only have a single set of rules, making it quite simple. In a
+multi-state lexer, we would have multiple possible states, meaning that we could
+be following a number of different states at any point.
+
+Let's take the example of a simple string lexer. 
+
+* Outside of a string, we can have numbers or bare words, as well as quotation
+  marks. When we meet a quotation mark (`"`), it means that we have reached a
+  string, and we need to follow a different set of rules.
+* Inside a string, we have to produce a token for the entire content, *but* we
+  also need to watch out for "escaped" characters (`\u01234` for unicode
+  characters, `\"` for a quotation mark that is part of the string) and
+  quotation marks that end the string.
+
+Thus, we could have two different set of rules, so two states.
+
+Before we jump into making this lexer with Lixy, we need a quick word on how we
+identify these states.
+
+## State labels
+
+Much like tokens have a type, states have a label. A label simply identifies the
+state and allows us to refer back to it in a simple way.
+
+States labels can be defined using two methods, just like token types.
+
+* By calling `stateLabel()`, which creates a label we can use immediately.
+* By using an enum. Here, we implement the `LixyStateLabel` interface
+
+```kotlin
+enum class MyLabels : LixyStateLabel {
+    InString, OutsideOfString
+}
+```
+
+We use these labels by simply putting the label before the `state`.
+
+```kotlin
+// Using stateLabel()
+val stateOne = stateLabel()
+val stateTwo = stateLabel()
+lixy {
+    stateOne state {
+        // ...
+    }
+    stateTwo state {
+        // ...
+    }
+}
+
+// Using an enum
+lixy {
+    MyLabels.InString state {
+        // ...
+    }
+    MyLabels.OutsideOfString state {
+        // ...
+    }
+}
+```
+
+## Default state
+
+Lixy needs to know where we start, thus we must define a state as the "default
+state". This can be done in two ways:
+
+* By using a special label `default` which is automatically created by Lixy.
+
+```kotlin
+lixy {
+    default state {
+        // ...
+    }
+    MyLabels.InString state {
+        // ...
+    }
+}
+```
+
+* By telling Lixy what the default state is
+
+```kotlin
+lixy {
+    default state MyLabels.OutsideOfString
+    // ...
+}
+```
+
+## Moving between states
+
+Moving between states can only been done upon a match. Simply put `thenState stateLabel` after a match, for example:
+
+```kotlin
+"hello" isToken greeting thenState hasBeenGreeted
+```
+
+In this example `greeting` is a token type and `hasBeenGreeted` is a state
+label. When this matcher matches, the lexer will then use the `hasBeenGreeted`
+state from now on.
+
+## A more complex lexer
+
+With all of this knowledge, let's make a multi-state lexer!
+
+```kotlin
+// States
+val inString = stateLabel()
+val outsideOfString = stateLabel()
+
+// Token types
+val number = tokenType("number")
+val word = tokenType("word")
+val stringStart = tokenType("string start")
+
+val stringEnd = tokenType("string end")
+val stringContent = tokenType("string content")
+val unicodeChar = tokenType("unicode char")
+val escapedQuote = tokenType("escaped quote")
+
+val lexer = lixy {
+    default state outsideOfString
+    outsideOfString state {
+        // Match a "
+        "\"" isToken stringStart thenState inString
+        ('a'..'z').repeated isToken word
+        ('0'..'9').repeated isToken number
+        " ".ignore
+    }
+    inString state {
+        // Match a "
+        "\"" isToken stringEnd thenState outsideOfString
+        // Match a \"
+        "\\\"" isToken escapedQuote
+        // Match a \u followed by a number
+        matches("""\\u\d+""") isToken unicodeChar
+        // Match anything else that does not contain a quote or a backslash
+        matches("""([^\"])""") isToken stringContent
+    }
+}
+```
+
+i> The """ is a raw string in Kotlin, which means we don't need to escape things
+inside, but RegExes require us to escape `\`. Otherwise, we would need to write
+`\\\\` so that Kotlin escapes them (resulting in a string that contains `\\`,
+which would then be interpreted as matching a single backslash by Regex)
