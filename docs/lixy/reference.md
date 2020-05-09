@@ -104,7 +104,8 @@ at least one.
 Internally, this recognizer is optimized to check its list as little as
 possible, so you can place as many strings as you want in there.
 
-If you want to reuse the same list over multiple recognizers/states/whatever, you can do it like so:
+If you want to reuse the same list over multiple recognizers/states/whatever,
+you can do it like so:
 
 ```kotlin
 val myStrings = listOf("Hello", "Hey", "Hi").toTypedArray()
@@ -164,15 +165,20 @@ A repeated recognizer is a modifier that takes a base recognizer and matches
 against a repetition of that recognizer. The minimum and maximum amount of
 repetitions can be customized.
 
-There are three ways of creating a repeated recognizer, where `recognizer` is another (pseudo-)recognizer:
+There are three ways of creating a repeated recognizer, where `recognizer` is
+another (pseudo-)recognizer:
 
-* `recognizer.repeated`: Match against a repetition with at least one element and no maximum
-* `recognizer.repeated(x)`: Match against a repetition with at least `x` repetitions and no maximum
-* `recognizer.repeated(x, y)`: Match against a repetition with at least `x` repetitions and at most `y` repetitions.
+* `recognizer.repeated`: Match against a repetition with at least one element
+  and no maximum
+* `recognizer.repeated(x)`: Match against a repetition with at least `x`
+  repetitions and no maximum
+* `recognizer.repeated(x, y)`: Match against a repetition with at least `x`
+  repetitions and at most `y` repetitions.
 
 ?> The last two are actually the same function, and can take named arguments.
 The parameters are `min` (default 1) and `max` (default null to indicate no
-maximum). So you could use `recognizer.repeated(max = 10)` for a repetition of at least 1 and at most 10 occurences.
+maximum). So you could use `recognizer.repeated(max = 10)` for a repetition of
+at least 1 and at most 10 occurences.
 
 Example:
 

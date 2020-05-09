@@ -2,7 +2,8 @@
 
 ## Downloading
 
-Pangoro is published on JitPack. There are no released versions at the moment: instead, use the commit hash as the version string.
+Pangoro is published on JitPack. There are no released versions at the moment:
+instead, use the commit hash as the version string.
 
 [Check out Pangoro on JitPack](https://jitpack.io/#guru.zoroark/Pangoro).
 
@@ -19,13 +20,16 @@ dependencies {
 }
 ```
 
-Pangoro has a dependency on Lixy as well. Lixy is automatically pulled with Pangoro.
+Pangoro has a dependency on Lixy as well. Lixy is automatically pulled with
+Pangoro.
 
 Replace `VARIANT` with:
 
 - For Kotlin/JVM, `pangoro-jvm`
 - For Kotlin/JS, `pangoro-js`
-- For Kotlin MPP, `pangoro` in the common dependencies. The platform-specific variants are retrieved automatically. If you only want to use Pangoro on  a specific platform, add that platform's variant in the platform's dependencies.
+- For Kotlin MPP, `pangoro` in the common dependencies. The platform-specific
+  variants are retrieved automatically. If you only want to use Pangoro on a
+  specific platform, add that platform's variant in the platform's dependencies.
 
 Replace `VERSION` with the version you want.
 

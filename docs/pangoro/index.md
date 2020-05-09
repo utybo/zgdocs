@@ -1,6 +1,6 @@
 # Pangoro
 
-[Pangoro](https://github.com/utybo/Pangoro) is a parser for Lixy tokens.
+[**Pangoro**](https://github.com/utybo/Pangoro) is a parser for Lixy tokens.
 
 A parser takes a list of tokens and turns them into an AST (Abstract Syntax
 Tree). Pangoro allows you to do this with a clean, simple and nicely typed DSL.

@@ -6,7 +6,8 @@ Welcome to Pangoro! This page will guide you through your first steps using the 
 
 ## Parser 101
 
-A parser is a tool that turns a list of tokens into an [abstract syntax tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree).
+A parser is a tool that turns a list of tokens into an
+[abstract syntax tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree).
 
 Pangoro allows you to do just that: based on Lixy tokens, Pangoro will turn them
 into an abstract syntax tree with an easy to use syntax.
@@ -87,7 +88,8 @@ And... That's it! You can now put your expectations in the `MyNode` block.
 
 Pangoro is based heavily on the concept of "expectations".
 
-Each node "expects" to match a specific structure. For example, an "assignment" might look like
+Each node "expects" to match a specific structure. For example, an "assignment"
+might look like
 
 ```
 myVar = "Hello!";

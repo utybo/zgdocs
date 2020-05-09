@@ -1,6 +1,8 @@
 # Lixy
 
-[**Lixy**](https://github.com/utybo/Lixy) is a lexer library for creating lexers on Kotlin, the easy way. It does not use any code generation of any kind, preferring a simpler approach, entirely in Kotlin.
+[**Lixy**](https://github.com/utybo/Lixy) is a lexer library for creating lexers
+on Kotlin, the easy way. It does not use any code generation of any kind,
+preferring a simpler approach, entirely in Kotlin.
 
 Lixy is available on Kotlin/JVM and Kotlin/JS and is compatible with Kotlin MPP.
 
@@ -8,9 +10,13 @@ To get started, visit [this page](start).
 
 ## Lexers
 
-A [lexer](https://en.wikipedia.org/wiki/Lexical_analysis) is a tool that turns a string of characters into a sequence of tokens. This is extremely useful for things like *compilers*: when using a lexer first, you no longer need to deal with individual characters, you will deal with full sequences.
+A [lexer](https://en.wikipedia.org/wiki/Lexical_analysis) is a tool that turns a
+string of characters into a sequence of tokens. This is extremely useful for
+things like *compilers*: when using a lexer first, you no longer need to deal
+with individual characters, you will deal with full sequences.
 
-What's more, with more advanced lexers, you can also immediately isolate some special constructs, like string and character escaping.
+What's more, with more advanced lexers, you can also immediately isolate some
+special constructs, like string and character escaping.
 
 ## Example
 
