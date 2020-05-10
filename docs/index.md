@@ -8,7 +8,7 @@ project names below.
 
 - [Lixy](lixy/), a lexer framework for Kotlin
 - [Pangoro](pangoro/), a parser framework for Lixy and Kotlin
-
+- [ktor-rate-limit](ktor-rate-limit/), a rate limiting feature for Ktor servers
 
 
 ---
