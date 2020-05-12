@@ -90,6 +90,78 @@ By default, `rateLimited` will use the feature's global configuration. You can
 override some parameters here: `limit`, `timeBeforeReset`,
 `additionalKeyExtractor`.
 
+## Reverse proxies and IP address spoofing
+
+!> **Read this section carefully if you are using your Ktor server behind a 
+reverse proxy.**
+
+**By default, ktor-rate-limit uses the remote host's IP address to determine the
+caller key. This ranges from potentially problematic to being a DoS vector.**
+
+* If you **use a reverse proxy without doing anything in Ktor**, the remote 
+  host will always be the IP address of your reverse proxy, making the rate 
+  limit the same for everyone, which is obviously a bad thing.
+
+Reverse proxy support is
+[available in Ktor](https://ktor.io/servers/features/forward-headers.html). Use
+it!
+
+**Make sure you are using the correct feature.** `ForwadedHeaderSupport` is
+  for the `Forwarded` header, `XForwardedHeaderSupport` is for the
+  `X-Forwarded-Host`
+
+**Your reverse proxy MUST NOT RETAIN THE FORWARDED HEADERS THE CLIENT SENDS**.
+Forwarded headers always work in some kind of a list, typically like
+`client, proxy 1, proxy 2`. Most proxies, if you are using their default
+behavior, may only *append the host at the end of the existing header*, which
+MUST NOT happen if the header is provided by the client, because every server
+assumes that the client's IP address is the first one in the list.
+
+Let's say the client's IP address is `2.2.2.2`. Let's take this request:
+
+```
+GET / HTTP/1.0
+X-Forwarded-For: 99.99.99.99
+```
+
+A **misconfigured** reverse proxy would only *add the real IP address to the 
+list*, and your server would receive this:
+
+```
+GET / HTTP/1.0
+Host: realhost.com
+X-Forwarded-For: 99.99.99.99, 2.2.2.2
+...
+```
+
+(There may be other proxies at the end of the list if your server is behind
+multiple proxies)
+
+Ktor (and thus `ktor-rate-limit`) will give `99.99.99.99` as the real IP address
+of the client, **which is not the case**. This could lead to DoS attacks by
+flooding the server with different IP addresses (the rate limiting feature's
+internal map would run out of memory), make rate limiting useless, or other very
+bad things.
+
+A **correctly configured** reverse proxy replaces this header entirely and
+ignores the client's header value:
+
+```
+GET / HTTP/1.0
+Host: realhost.com
+X-Forwarded-For: 2.2.2.2
+```
+
+So:
+
+* If your server is behind a single proxy, make sure that proxy correctly
+  overwrites whatever the client sends, especially in the `X-Forwarded-Host`
+  header.
+* If you have multiple proxies (Clients -> P1 -> P2 -> P3 -> Ktor server), make
+  sure the "front" proxy (that receives the clients' request, P1 here) and
+  **only the front one**, otherwise you go back to the first issue, where only
+  P1's IP address will ever show up.
+
 ## How it works
 
 Before going into each parameter, it's worth pausing to understand what each
